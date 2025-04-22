@@ -1,85 +1,83 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
-import HelloWorld from './components/HelloWorld.vue'
+import { useAccountsStore } from './stores/accounts';
+import AccountForm from './components/AccountForm.vue';
+import type { AccountRecord } from './types';
+
+const store = useAccountsStore();
+
+const handleUpdate = (account: AccountRecord): void => {
+  store.updateAccount(account);
+};
+
+const handleDelete = (id: string): void => {
+  store.deleteAccount(id);
+};
+
+// defineProps<{
+// }>();
+
+// defineEmits<{
+// }>();
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+  <div class="container">
+    <header>
+      <h1>Управление учетными записями</h1>
+      <button class="add-btn" @click="store.addAccount">+</button>
+    </header>
 
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-      </nav>
+    <div class="help-text">
+      Подсказка: Введите метки через точку с запятой (;)
     </div>
-  </header>
 
-  <RouterView />
+    <div class="accounts-list">
+      <AccountForm v-for="account in store.accounts" :key="account.id" :account="account" @update="handleUpdate"
+        @delete="handleDelete" />
+    </div>
+  </div>
 </template>
 
 <style scoped>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
 header {
-  line-height: 1.5;
-  max-height: 100vh;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+.add-btn {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
+.add-btn:hover {
+  background-color: #45a049;
 }
 
-nav a.router-link-exact-active {
-  color: var(--color-text);
+.help-text {
+  margin-bottom: 1rem;
+  color: #666;
 }
 
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
+.accounts-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 </style>
