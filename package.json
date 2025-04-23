@@ -14,6 +14,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mdi/font": "^7.4.47",
     "install": "^0.13.0",
     "pinia": "^2.x.x",
     "pinia-plugin-persistedstate": "^4.2.0",

@@ -15,9 +15,15 @@ const errors = ref<ValidationErrors>({});
 
 const localAccount = ref({ ...props.account });
 
+const labelsString = ref(props.account.labels.map(label => label.text).join(';'));
+
 watch(() => props.account, (newVal) => {
     localAccount.value = { ...newVal };
 }, { deep: true });
+
+watch(() => props.account.labels, (newVal) => {
+    labelsString.value = newVal.map(label => label.text).join(';');
+});
 
 const validateAccount = () => {
     const newErrors: ValidationErrors = {};
@@ -52,6 +58,7 @@ const handleTypeChange = () => {
 
 const handleLabelsChange = (value: string) => {
     if (value.length <= 50) {
+        labelsString.value = value;
         emit('update', {
             ...localAccount.value,
             labels: value
@@ -66,42 +73,34 @@ const handleLabelsChange = (value: string) => {
 <template>
     <v-card class="account-form pa-4 ma-2">
         <v-form @submit.prevent>
-            <v-container>
-                <v-row>
-                    <v-col cols="12" sm="6">
-                        <v-text-field :value="localAccount.labels.map(label => label.text).join(';')"
-                            @blur="handleLabelsChange($event.target.value)" label="Метка"
-                            placeholder="Введите метки через ;" variant="outlined" density="comfortable"></v-text-field>
-                    </v-col>
+            <div class="form-grid">
+                <!-- Левая колонка -->
+                <div class="left-column">
+                    <v-text-field v-model="labelsString" @blur="handleLabelsChange($event.target.value)" label="Метка"
+                        placeholder="Введите метки через ;" variant="outlined" density="comfortable"></v-text-field>
 
-                    <v-col cols="12" sm="6">
-                        <v-select v-model="localAccount.type" @change="handleTypeChange" :items="[
-                            { title: 'LDAP', value: 'LDAP' },
-                            { title: 'Локальная', value: 'LOCAL' }
-                        ]" label="Тип записи" variant="outlined" density="comfortable"></v-select>
-                    </v-col>
+                    <v-select v-model="localAccount.type" @change="handleTypeChange" :items="[
+                        { title: 'LDAP', value: 'LDAP' },
+                        { title: 'Локальная', value: 'LOCAL' }
+                    ]" label="Тип записи" variant="outlined" density="comfortable"></v-select>
+                </div>
 
-                    <v-col cols="12" sm="6">
+                <!-- Правая колонка -->
+                <div class="right-column">
+                    <div class="credentials-container">
                         <v-text-field v-model="localAccount.login" :error="errors.login" @blur="handleUpdate"
                             label="Логин" maxlength="100" required variant="outlined"
                             density="comfortable"></v-text-field>
-                    </v-col>
 
-                    <v-col v-if="localAccount.type === 'LOCAL'" cols="12" sm="6">
-                        <v-text-field v-model="localAccount.password" :error="errors.password" type="password"
-                            @blur="handleUpdate" label="Пароль" maxlength="100" required variant="outlined"
-                            density="comfortable"></v-text-field>
-                    </v-col>
-                </v-row>
+                        <v-text-field v-if="localAccount.type === 'LOCAL'" v-model="localAccount.password"
+                            :error="errors.password" type="password" @blur="handleUpdate" label="Пароль" maxlength="100"
+                            required variant="outlined" density="comfortable"></v-text-field>
 
-                <v-row class="mt-2">
-                    <v-col cols="12">
-                        <v-btn color="error" @click="emit('delete', localAccount.id)" variant="elevated">
-                            Удалить
-                        </v-btn>
-                    </v-col>
-                </v-row>
-            </v-container>
+                        <v-btn icon="mdi-delete" color="error" variant="text" density="comfortable"
+                            class="delete-button" @click="emit('delete', localAccount.id)"></v-btn>
+                    </div>
+                </div>
+            </div>
         </v-form>
     </v-card>
 </template>
@@ -109,7 +108,49 @@ const handleLabelsChange = (value: string) => {
 <style scoped>
 .account-form {
     width: 100%;
-    max-width: 1200px;
     margin: 0 auto;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.left-column {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    gap: 16px;
+}
+
+.right-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.credentials-container {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+}
+
+.delete-button {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 959px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+
+
+    .delete-button {
+        align-self: flex-start;
+    }
+}
+
+@media (max-width: 450px) {
+    
 }
 </style>
