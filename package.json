@@ -11,7 +11,10 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "lint": "eslint . --fix",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "cypress:open": "cypress open --e2e --browser chrome",
+    "cypress:run": "cypress run --e2e",
+    "test:e2e": "start-server-and-test dev http://localhost:5173 cypress:run"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",
@@ -23,8 +26,11 @@
     "vuetify": "^3.8.2"
   },
   "devDependencies": {
+    "@cypress/vue": "^6.0.2",
     "@tsconfig/node22": "^22.0.1",
+    "@types/cypress": "^0.1.6",
     "@types/jsdom": "^21.1.7",
+    "@types/mocha": "^10.0.10",
     "@types/node": "^22.14.0",
     "@vitejs/plugin-vue": "^x.x.x",
     "@vitest/eslint-plugin": "^1.1.39",
@@ -32,12 +38,14 @@
     "@vue/eslint-config-typescript": "^14.5.0",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.7.0",
+    "cypress": "^14.3.2",
     "eslint": "^9.22.0",
     "eslint-plugin-vue": "~10.0.0",
     "jiti": "^2.4.2",
     "jsdom": "^26.0.0",
     "npm-run-all2": "^7.0.2",
     "prettier": "3.5.3",
+    "start-server-and-test": "^2.0.11",
     "typescript": "^x.x.x",
     "vite": "^6.2.4",
     "vite-plugin-vue-devtools": "^7.7.2",

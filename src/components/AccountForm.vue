@@ -53,6 +53,19 @@ const handleTypeChange = () => {
     } else {
         localAccount.value.password = '';
     }
+
+    // Добавляем setTimeout, чтобы дождаться появления overlay
+    setTimeout(() => {
+        console.log('Добавляем setTimeout');
+        const overlay = document.querySelector('body > div.v-overlay-container');
+        if (overlay) {
+            console.log('v-overlay-container найден:', overlay);
+            console.log('Содержимое:', overlay.innerHTML);
+        } else {
+            console.log('v-overlay-container не найден');
+        }
+    }, 100);
+
     emit('update', localAccount.value);
 };
 
@@ -79,7 +92,7 @@ const handleLabelsChange = (value: string) => {
                     <v-text-field v-model="labelsString" @blur="handleLabelsChange($event.target.value)" label="Метка"
                         placeholder="Введите метки через ;" variant="outlined" density="comfortable"></v-text-field>
 
-                    <v-select v-model="localAccount.type" @change="handleTypeChange" :items="[
+                    <v-select v-model="localAccount.type" @click="handleTypeChange()" :items="[
                         { title: 'LDAP', value: 'LDAP' },
                         { title: 'Локальная', value: 'LOCAL' }
                     ]" label="Тип записи" variant="outlined" density="comfortable"></v-select>
@@ -150,7 +163,5 @@ const handleLabelsChange = (value: string) => {
     }
 }
 
-@media (max-width: 450px) {
-    
-}
+@media (max-width: 450px) {}
 </style>
